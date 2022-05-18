@@ -20,13 +20,13 @@ class CustomUserManager(BaseUserManager):
     #     user.set_password(password)
     #     user.save()
     #     return user
-    def create_user(self, email, fullname=None,password=None):
+    def create_user(self, email, password=None):
         if not email:
             raise ValueError('Users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
-            fullname=self.normalize_email(email),
+         
          
         )
 
@@ -50,7 +50,7 @@ class CustomUser(AbstractUser):
   
     email = models.EmailField(_('email address'), unique=True)
     username= models.CharField(max_length=30,unique=True, blank=True, null=True)
-    fullname = models.CharField(max_length=30, blank=True, null=True)
+    # fullname = models.CharField(max_length=30, blank=True, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 

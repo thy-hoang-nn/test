@@ -19,21 +19,35 @@ class UserSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password')
+        fields = ( 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
         
     def create(self, validated_data):
-        user = CustomUser.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+        user = CustomUser.objects.create_user( validated_data['email'], validated_data['password'])
 
         return user
 
     
-# class LoginSerializer(serializers.Serializer):
-#     email = serializers.EmailField(required=True)
-#     password = serializers.CharField(required=True)
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=128, write_only=True)
+    def validate(self, data):
+        email= data.get("email", None)
+        password= data.get("password", None)
+        print(email)
+        user = authenticate(email=email, password=password)
+        if user is None:
+            raise serializers.ValidationError(
+                'A user with this email and password is not found.'
+            )
+        return {
+            'email':user.email
+        }
 
     # def validate(self, data):
     #     user = authenticate(**data)
+    #     print(data)
+    #     print(user)
     #     if user and user.is_active:
     #         return user
     #     raise serializers.ValidationError('Incorrect Credentials Passed.')
